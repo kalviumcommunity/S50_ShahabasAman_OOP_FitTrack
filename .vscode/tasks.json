@@ -1,0 +1,22 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+	  {
+		"label": "build",
+		"type": "shell",
+		"command": "g++",
+		"args": [
+		  "-g",
+		  "${workspaceFolder}/src/main.cpp", // Add other .cpp files if any
+		  "-o",
+		  "${workspaceFolder}/fittrack"
+		],
+		"group": {
+		  "kind": "build",
+		  "isDefault": true
+		},
+		"problemMatcher": ["$gcc"]
+	  }
+	]
+  }
+  
