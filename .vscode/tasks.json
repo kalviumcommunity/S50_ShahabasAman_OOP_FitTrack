@@ -1,22 +1,25 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-	  {
-		"label": "build",
-		"type": "shell",
-		"command": "g++",
-		"args": [
-		  "-g",
-		  "${workspaceFolder}/src/main.cpp", // Add other .cpp files if any
-		  "-o",
-		  "${workspaceFolder}/fittrack"
-		],
-		"group": {
-		  "kind": "build",
-		  "isDefault": true
-		},
-		"problemMatcher": ["$gcc"]
-	  }
-	]
-  }
-  
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build fittrack",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-Iinclude",
+                "-g",
+                "src/*.cpp",
+                "-o",
+                "fittrack"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Generated task for building the project"
+        }
+    ]
+}
