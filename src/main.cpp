@@ -66,12 +66,21 @@ public:
 };
 
 int main() {
-    User user1;
+    const int userCount = 3; // Number of users
+    User users[userCount];   // Array of User objects
     Tracker tracker;
 
     // Set user details from input
-    user1.setDetailsFromInput();
-    user1.displayInfo();
+    for (int i = 0; i < userCount; ++i) {
+        cout << "\nEnter details for User " << i + 1 << ":\n";
+        users[i].setDetailsFromInput();
+    }
+
+    // Display user details
+    for (int i = 0; i < userCount; ++i) {
+        cout << "\nDetails of User " << i + 1 << ":\n";
+        users[i].displayInfo();
+    }
 
     // Log activities from input
     tracker.logActivitiesFromInput();
@@ -88,7 +97,10 @@ int main() {
 
         switch (choice) {
             case 1:
-                user1.displayInfo();
+                for (int i = 0; i < userCount; ++i) {
+                    cout << "\nDetails of User " << i + 1 << ":\n";
+                    users[i].displayInfo();
+                }
                 tracker.displayActivities();
                 break;
             case 2:
