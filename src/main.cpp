@@ -5,56 +5,65 @@
 using namespace std;
 
 class User {
-public:
-    void setDetailsFromInput(); // Method to set details from console input
-    void displayInfo(); // Method to display user information
-    
 private:
     string name;
     int age;
+
+public:
+    // Method to set details from console input
+    void setDetailsFromInput() {
+        cout << "Enter Name: ";
+        getline(cin, name); // Use getline to allow spaces in the name
+        cout << "Enter Age: ";
+        cin >> age;
+        cin.ignore(); // Ignore leftover newline character in the input buffer
+    }
+
+    // Method to display user information
+    void displayInfo() const {
+        cout << "Name: " << name << endl;
+        cout << "Age: " << age << endl;
+    }
+
+    // Method to set details using this pointer
+    void setDetails(const string& userName, int userAge) {
+        this->name = userName;
+        this->age = userAge;
+    }
 };
-
-void User::setDetailsFromInput() {
-    cout << "Enter Name: ";
-    getline(cin, name); // Use getline to allow spaces in the name
-    cout << "Enter Age: ";
-    cin >> age;
-    cin.ignore(); // Ignore leftover newline character in the input buffer
-}
-
-void User::displayInfo() {
-    cout << "Name: " << name << endl;
-    cout << "Age: " << age << endl;
-}
 
 class Tracker {
-public:
-    void logActivitiesFromInput(); // New method to log activities from console input
-    void displayActivities(); // Existing method to display activities
-    
 private:
     vector<string> activities;
-};
 
-void Tracker::logActivitiesFromInput() {
-    string activity;
-    char more;
-    do {
-        cout << "Enter Activity: ";
-        getline(cin, activity);
-        activities.push_back(activity);
-        cout << "Add more activities? (y/n): ";
-        cin >> more;
-        cin.ignore(); // Ignore leftover newline character in the input buffer
-    } while (more == 'y' || more == 'Y');
-}
-
-void Tracker::displayActivities() {
-    cout << "Logged Activities:" << endl;
-    for (const auto& activity : activities) {
-        cout << activity << endl;
+public:
+    // Method to log activities from console input
+    void logActivitiesFromInput() {
+        string activity;
+        char more;
+        do {
+            cout << "Enter Activity: ";
+            getline(cin, activity);
+            activities.push_back(activity);
+            cout << "Add more activities? (y/n): ";
+            cin >> more;
+            cin.ignore(); // Ignore leftover newline character in the input buffer
+        } while (more == 'y' || more == 'Y');
     }
-}
+
+    // Method to display activities
+    void displayActivities() const {
+        cout << "Logged Activities:" << endl;
+        for (const auto& activity : activities) {
+            cout << activity << endl;
+        }
+    }
+
+    // Method to add an activity using this pointer
+    void addActivity(const string& activity) {
+        this->activities.push_back(activity);
+    }
+};
 
 int main() {
     User user1;
