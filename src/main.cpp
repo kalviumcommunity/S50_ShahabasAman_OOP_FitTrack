@@ -10,13 +10,13 @@ private:
     int age;
 
 public:
-    // Method to set details from console input
+    // Method to set-details from console input
     void setDetailsFromInput() {
         cout << "Enter Name: ";
-        getline(cin, name); // Use getline to allow spaces in the name
+        getline(cin, name); 
         cout << "Enter Age: ";
         cin >> age;
-        cin.ignore(); // Ignore leftover newline character in the input buffer
+        cin.ignore(); 
     }
 
     // Method to display user information
@@ -25,7 +25,7 @@ public:
         cout << "Age: " << age << endl;
     }
 
-    // Method to set details using this pointer
+    // Method to set-details using this pointer
     void setDetails(const string& userName, int userAge) {
         this->name = userName;
         this->age = userAge;
@@ -37,7 +37,7 @@ private:
     vector<string> activities;
 
 public:
-    // Method to log activities from console input
+    // Method to log-activities from console input
     void logActivitiesFromInput() {
         string activity;
         char more;
@@ -47,7 +47,7 @@ public:
             activities.push_back(activity);
             cout << "Add more activities? (y/n): ";
             cin >> more;
-            cin.ignore(); // Ignore leftover newline character in the input buffer
+            cin.ignore(); 
         } while (more == 'y' || more == 'Y');
     }
 
@@ -66,9 +66,9 @@ public:
 };
 
 int main() {
-    const int userCount = 3; // Number of users
-    User users[userCount];   // Array of User objects
-    Tracker tracker;
+    const int userCount = 3; 
+    User* users = new User[userCount]; // Dynamically allocate array of User objects
+    Tracker* tracker = new Tracker; // Dynamically allocate Tracker object
 
     // Set user details from input
     for (int i = 0; i < userCount; ++i) {
@@ -83,8 +83,8 @@ int main() {
     }
 
     // Log activities from input
-    tracker.logActivitiesFromInput();
-    tracker.displayActivities();
+    tracker->logActivitiesFromInput();
+    tracker->displayActivities();
 
     while (true) {
         int choice;
@@ -93,7 +93,7 @@ int main() {
         cout << "2. Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
-        cin.ignore(); // Ignore leftover newline character in the input buffer
+        cin.ignore();
 
         switch (choice) {
             case 1:
@@ -101,10 +101,12 @@ int main() {
                     cout << "\nDetails of User " << i + 1 << ":\n";
                     users[i].displayInfo();
                 }
-                tracker.displayActivities();
+                tracker->displayActivities();
                 break;
             case 2:
                 cout << "Exiting..." << endl;
+                delete[] users; // Free the memory allocated for users
+                delete tracker; // Free the memory allocated for tracker
                 return 0;
             default:
                 cout << "Invalid choice. Please try again." << endl;
