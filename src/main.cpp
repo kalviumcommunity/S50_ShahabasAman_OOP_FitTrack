@@ -8,9 +8,18 @@ class User {
 private:
     string name;
     int age;
+    static int userCount; // Static variable to count the number of User objects
 
 public:
-    // Method to set-details from console input
+    User() {
+        userCount++; // Increment the count whenever a new User object is created
+    }
+
+    ~User() {
+        userCount--; // Decrement the count whenever a User object is destroyed
+    }
+
+    // Method to set details from console input
     void setDetailsFromInput() {
         cout << "Enter Name: ";
         getline(cin, name); 
@@ -25,19 +34,22 @@ public:
         cout << "Age: " << age << endl;
     }
 
-    // Method to set-details using this pointer
-    void setDetails(const string& userName, int userAge) {
-        this->name = userName;
-        this->age = userAge;
+    // Static method to get the current user count
+    static int getUserCount() {
+        return userCount;
     }
 };
+
+// Definition of static variable
+int User::userCount = 0;
 
 class Tracker {
 private:
     vector<string> activities;
+    static int totalActivities; // Static variable to keep track of total activities
 
 public:
-    // Method to log-activities from console input
+    // Method to log activities from console input
     void logActivitiesFromInput() {
         string activity;
         char more;
@@ -45,6 +57,7 @@ public:
             cout << "Enter Activity: ";
             getline(cin, activity);
             activities.push_back(activity);
+            totalActivities++; // Increment the total activities count
             cout << "Add more activities? (y/n): ";
             cin >> more;
             cin.ignore(); 
@@ -59,53 +72,57 @@ public:
         }
     }
 
-    // Method to add an activity using this pointer
-    void addActivity(const string& activity) {
-        this->activities.push_back(activity);
+    // Static method to get the total number of activities logged
+    static int getTotalActivities() {
+        return totalActivities;
     }
 };
 
+// Definition of static variable
+int Tracker::totalActivities = 0;
+
 int main() {
-    const int userCount = 3; 
-    User* users = new User[userCount]; // Dynamically allocate array of User objects
+    vector<User*> users; // Vector to hold pointers to User objects
     Tracker* tracker = new Tracker; // Dynamically allocate Tracker object
-
-    // Set user details from input
-    for (int i = 0; i < userCount; ++i) {
-        cout << "\nEnter details for User " << i + 1 << ":\n";
-        users[i].setDetailsFromInput();
-    }
-
-    // Display user details
-    for (int i = 0; i < userCount; ++i) {
-        cout << "\nDetails of User " << i + 1 << ":\n";
-        users[i].displayInfo();
-    }
-
-    // Log activities from input
-    tracker->logActivitiesFromInput();
-    tracker->displayActivities();
 
     while (true) {
         int choice;
         cout << "\nMenu:\n";
-        cout << "1. View Profile\n";
-        cout << "2. Exit\n";
+        cout << "1. Add a new User\n";
+        cout << "2. Log Activities\n";
+        cout << "3. View Profile and Activities\n";
+        cout << "4. View User and Activity Counts\n";
+        cout << "5. Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
         cin.ignore();
 
         switch (choice) {
-            case 1:
-                for (int i = 0; i < userCount; ++i) {
+            case 1: {
+                User* newUser = new User(); // Create a new User object
+                newUser->setDetailsFromInput();
+                users.push_back(newUser); // Add the new user to the vector
+                break;
+            }
+            case 2:
+                tracker->logActivitiesFromInput();
+                break;
+            case 3:
+                for (int i = 0; i < users.size(); ++i) {
                     cout << "\nDetails of User " << i + 1 << ":\n";
-                    users[i].displayInfo();
+                    users[i]->displayInfo();
                 }
                 tracker->displayActivities();
                 break;
-            case 2:
+            case 4:
+                cout << "Total Users: " << User::getUserCount() << endl;
+                cout << "Total Activities Logged: " << Tracker::getTotalActivities() << endl;
+                break;
+            case 5:
                 cout << "Exiting..." << endl;
-                delete[] users; // Free the memory allocated for users
+                for (User* user : users) {
+                    delete user; // Free the memory allocated for each user
+                }
                 delete tracker; // Free the memory allocated for tracker
                 return 0;
             default:
