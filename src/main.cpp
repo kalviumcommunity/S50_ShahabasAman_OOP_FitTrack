@@ -8,24 +8,44 @@ class User {
 private:
     string name;
     int age;
-    static int userCount; // Static variable to count the number of User objects
+    static int userCount;
 
 public:
     User() {
-        userCount++; // Increment the count whenever a new User object is created
+        userCount++;
     }
 
     ~User() {
-        userCount--; // Decrement the count whenever a User object is destroyed
+        userCount--;
+    }
+
+    // **Accessor (Getter) for name**
+    string getName() const {
+        return name;
+    }
+
+    // **Mutator (Setter) for name**
+    void setName(const string& newName) {
+        name = newName;
+    }
+
+    // **Accessor (Getter) for age**
+    int getAge() const {
+        return age;
+    }
+
+    // **Mutator (Setter) for age**
+    void setAge(int newAge) {
+        age = newAge;
     }
 
     // Method to set details from console input
     void setDetailsFromInput() {
         cout << "Enter Name: ";
-        getline(cin, name); 
+        getline(cin, name);
         cout << "Enter Age: ";
         cin >> age;
-        cin.ignore(); 
+        cin.ignore();
     }
 
     // Method to display user information
@@ -46,9 +66,19 @@ int User::userCount = 0;
 class Tracker {
 private:
     vector<string> activities;
-    static int totalActivities; // Static variable to keep track of total activities
+    static int totalActivities;
 
 public:
+    // **Accessor (Getter) for activities**
+    vector<string> getActivities() const {
+        return activities;
+    }
+
+    // **Mutator (Setter) for activities**
+    void setActivities(const vector<string>& newActivities) {
+        activities = newActivities;
+    }
+
     // Method to log activities from console input
     void logActivitiesFromInput() {
         string activity;
@@ -57,10 +87,10 @@ public:
             cout << "Enter Activity: ";
             getline(cin, activity);
             activities.push_back(activity);
-            totalActivities++; // Increment the total activities count
+            totalActivities++;
             cout << "Add more activities? (y/n): ";
             cin >> more;
-            cin.ignore(); 
+            cin.ignore();
         } while (more == 'y' || more == 'Y');
     }
 
@@ -83,7 +113,7 @@ int Tracker::totalActivities = 0;
 
 int main() {
     vector<User*> users; // Vector to hold pointers to User objects
-    Tracker* tracker = new Tracker; // Dynamically allocate Tracker object
+    Tracker* tracker = new Tracker;
 
     while (true) {
         int choice;
@@ -99,9 +129,9 @@ int main() {
 
         switch (choice) {
             case 1: {
-                User* newUser = new User(); // Create a new User object
+                User* newUser = new User();
                 newUser->setDetailsFromInput();
-                users.push_back(newUser); // Add the new user to the vector
+                users.push_back(newUser);
                 break;
             }
             case 2:
@@ -121,9 +151,9 @@ int main() {
             case 5:
                 cout << "Exiting..." << endl;
                 for (User* user : users) {
-                    delete user; // Free the memory allocated for each user
+                    delete user;
                 }
-                delete tracker; // Free the memory allocated for tracker
+                delete tracker;
                 return 0;
             default:
                 cout << "Invalid choice. Please try again." << endl;
