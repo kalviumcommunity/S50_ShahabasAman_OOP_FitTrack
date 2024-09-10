@@ -19,27 +19,22 @@ public:
         userCount--;
     }
 
-    // **Accessor (Getter) for name**
     string getName() const {
         return name;
     }
 
-    // **Mutator (Setter) for name**
     void setName(const string& newName) {
         name = newName;
     }
 
-    // **Accessor (Getter) for age**
     int getAge() const {
         return age;
     }
 
-    // **Mutator (Setter) for age**
     void setAge(int newAge) {
         age = newAge;
     }
 
-    // Method to set details from console input
     void setDetailsFromInput() {
         cout << "Enter Name: ";
         getline(cin, name);
@@ -48,19 +43,16 @@ public:
         cin.ignore();
     }
 
-    // Method to display user information
     void displayInfo() const {
         cout << "Name: " << name << endl;
         cout << "Age: " << age << endl;
     }
 
-    // Static method to get the current user count
     static int getUserCount() {
         return userCount;
     }
 };
 
-// Definition of static variable
 int User::userCount = 0;
 
 class Tracker {
@@ -69,17 +61,14 @@ private:
     static int totalActivities;
 
 public:
-    // **Accessor (Getter) for activities**
     vector<string> getActivities() const {
         return activities;
     }
 
-    // **Mutator (Setter) for activities**
     void setActivities(const vector<string>& newActivities) {
         activities = newActivities;
     }
 
-    // Method to log activities from console input
     void logActivitiesFromInput() {
         string activity;
         char more;
@@ -94,7 +83,6 @@ public:
         } while (more == 'y' || more == 'Y');
     }
 
-    // Method to display activities
     void displayActivities() const {
         cout << "Logged Activities:" << endl;
         for (const auto& activity : activities) {
@@ -102,17 +90,15 @@ public:
         }
     }
 
-    // Static method to get the total number of activities logged
     static int getTotalActivities() {
         return totalActivities;
     }
 };
 
-// Definition of static variable
 int Tracker::totalActivities = 0;
 
 int main() {
-    vector<User*> users; // Vector to hold pointers to User objects
+    vector<User*> users; 
     Tracker* tracker = new Tracker;
 
     while (true) {
