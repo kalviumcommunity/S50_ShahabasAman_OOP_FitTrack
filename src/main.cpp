@@ -11,17 +11,10 @@ private:
     static int userCount;
 
 public:
-    // Default Constructor
-    User() : name("Unknown"), age(0) {
+    User() {
         userCount++;
     }
 
-    // Parameterized Constructor
-    User(const string& newName, int newAge) : name(newName), age(newAge) {
-        userCount++;
-    }
-
-    // Destructor
     ~User() {
         userCount--;
     }
@@ -68,12 +61,6 @@ private:
     static int totalActivities;
 
 public:
-    // Default Constructor
-    Tracker() {}
-
-    // Destructor
-    ~Tracker() {}
-
     vector<string> getActivities() const {
         return activities;
     }
@@ -117,12 +104,11 @@ int main() {
     while (true) {
         int choice;
         cout << "\nMenu:\n";
-        cout << "1. Add a new User (Default Constructor)\n";
-        cout << "2. Add a new User (Parameterized Constructor)\n";
-        cout << "3. Log Activities\n";
-        cout << "4. View Profile and Activities\n";
-        cout << "5. View User and Activity Counts\n";
-        cout << "6. Exit\n";
+        cout << "1. Add a new User\n";
+        cout << "2. Log Activities\n";
+        cout << "3. View Profile and Activities\n";
+        cout << "4. View User and Activity Counts\n";
+        cout << "5. Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
         cin.ignore();
@@ -134,33 +120,21 @@ int main() {
                 users.push_back(newUser);
                 break;
             }
-            case 2: {
-                string name;
-                int age;
-                cout << "Enter Name: ";
-                getline(cin, name);
-                cout << "Enter Age: ";
-                cin >> age;
-                cin.ignore();
-                User* newUser = new User(name, age);
-                users.push_back(newUser);
-                break;
-            }
-            case 3:
+            case 2:
                 tracker->logActivitiesFromInput();
                 break;
-            case 4:
+            case 3:
                 for (int i = 0; i < users.size(); ++i) {
                     cout << "\nDetails of User " << i + 1 << ":\n";
                     users[i]->displayInfo();
                 }
                 tracker->displayActivities();
                 break;
-            case 5:
+            case 4:
                 cout << "Total Users: " << User::getUserCount() << endl;
                 cout << "Total Activities Logged: " << Tracker::getTotalActivities() << endl;
                 break;
-            case 6:
+            case 5:
                 cout << "Exiting..." << endl;
                 for (User* user : users) {
                     delete user;
