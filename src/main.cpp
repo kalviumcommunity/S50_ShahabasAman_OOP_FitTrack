@@ -71,6 +71,7 @@ public:
 
     ~Tracker() {}
 
+
     vector<string> getActivities() const {
         return activities;
     }
@@ -160,12 +161,14 @@ int main() {
     while (true) {
         int choice;
         cout << "\nMenu:\n";
+
         cout << "1. Add a Basic User\n";
         cout << "2. Add a Premium Member\n";
         cout << "3. Log Activities\n";
         cout << "4. View Profile and Activities\n";
         cout << "5. View User and Activity Counts\n";
         cout << "6. Exit\n";
+
         cout << "Enter your choice: ";
         cin >> choice;
         cin.ignore();
@@ -177,6 +180,7 @@ int main() {
                 users.push_back(newBasicUser);
                 break;
             }
+
             case 2: {
                 PremiumMember* newPremiumUser = new PremiumMember();
                 newPremiumUser->setDetailsFromInput();
@@ -185,9 +189,6 @@ int main() {
                 break;
             }
             case 3:
-                tracker->logActivitiesFromInput();
-                break;
-            case 4:
                 for (int i = 0; i < users.size(); ++i) {
                     cout << "\nDetails of User " << i + 1 << ":\n";
 
@@ -205,11 +206,11 @@ int main() {
                 tracker->displayActivities();
                 break;
 
-            case 5:
+            case 4:
                 cout << "Total Users: " << User::getUserCount() << endl;
                 cout << "Total Activities Logged: " << Tracker::getTotalActivities() << endl;
                 break;
-            case 6:
+            case 5:
                 cout << "Exiting..." << endl;
                 for (User* user : users) {
                     delete user;
