@@ -11,19 +11,17 @@ private:
     static int userCount;
 
 public:
-   // Default constructor
     User() {
         userCount++;
     }
 
-    // Parameterized constructor
     User(const string& newName, int newAge) {
         name = newName;
         age = newAge;
         userCount++;
     }
 
-    ~User() {
+    virtual ~User() {
         userCount--;
     }
 
@@ -69,10 +67,8 @@ private:
     static int totalActivities;
 
 public:
-    // Default Constructor
     Tracker() {}
 
-    // Destructor
     ~Tracker() {}
 
     vector<string> getActivities() const {
@@ -111,6 +107,52 @@ public:
 
 int Tracker::totalActivities = 0;
 
+class Member : public User {
+private:
+    string membershipType;
+
+public:
+    Member() : User() {
+        membershipType = "Basic";
+    }
+
+    Member(const string& name, int age, const string& type)
+        : User(name, age), membershipType(type) {}
+
+    string getMembershipType() const {
+        return membershipType;
+    }
+
+    void setMembershipType(const string& type) {
+        membershipType = type;
+    }
+
+    void displayInfo() const {
+        User::displayInfo(); 
+        cout << "Membership Type: " << membershipType << endl;
+    }
+};
+
+class PremiumMember : public Member {
+private:
+    string premiumBenefits;
+
+public:
+    // Default constructor
+    PremiumMember() : Member() {
+        premiumBenefits = "Extended access to all fitness programs.";
+    }
+
+    // Parameterized constructor
+    PremiumMember(const string& name, int age, const string& type, const string& benefits)
+        : Member(name, age, type), premiumBenefits(benefits) {}
+
+    void displayInfo() const {
+        Member::displayInfo();  // Calling base class function
+        cout << "Premium Benefits: " << premiumBenefits << endl;
+    }
+};
+
 int main() {
     vector<User*> users; 
     Tracker* tracker = new Tracker;
@@ -118,42 +160,61 @@ int main() {
     while (true) {
         int choice;
         cout << "\nMenu:\n";
-        cout << "1. Add a new User\n";
-        cout << "2. Log Activities\n";
-        cout << "3. View Profile and Activities\n";
-        cout << "4. View User and Activity Counts\n";
-        cout << "5. Exit\n";
+        cout << "1. Add a Basic User\n";
+        cout << "2. Add a Premium Member\n";
+        cout << "3. Log Activities\n";
+        cout << "4. View Profile and Activities\n";
+        cout << "5. View User and Activity Counts\n";
+        cout << "6. Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
         cin.ignore();
 
         switch (choice) {
             case 1: {
-                User* newUser = new User();  // Using the default constructor
-                newUser->setDetailsFromInput(); // This will handle user input for name and age
-                users.push_back(newUser);
+                Member* newBasicUser = new Member();
+                newBasicUser->setDetailsFromInput();
+                users.push_back(newBasicUser);
                 break;
             }
-            case 2:
+            case 2: {
+                PremiumMember* newPremiumUser = new PremiumMember();
+                newPremiumUser->setDetailsFromInput();
+                newPremiumUser->setMembershipType("Premium");
+                users.push_back(newPremiumUser);
+                break;
+            }
+            case 3:
                 tracker->logActivitiesFromInput();
                 break;
-            case 3:
+            case 4:
                 for (int i = 0; i < users.size(); ++i) {
                     cout << "\nDetails of User " << i + 1 << ":\n";
-                    users[i]->displayInfo();
+
+                    PremiumMember* premiumUser = dynamic_cast<PremiumMember*>(users[i]);
+                    Member* basicUser = dynamic_cast<Member*>(users[i]);
+
+                    if (premiumUser) {
+                        premiumUser->displayInfo();
+                    } else if (basicUser) {
+                        basicUser->displayInfo();
+                    } else {
+                        users[i]->displayInfo();
+                    }
                 }
                 tracker->displayActivities();
                 break;
-            case 4:
+
+            case 5:
                 cout << "Total Users: " << User::getUserCount() << endl;
                 cout << "Total Activities Logged: " << Tracker::getTotalActivities() << endl;
                 break;
-            case 5:
+            case 6:
                 cout << "Exiting..." << endl;
                 for (User* user : users) {
-                    delete user;  // Properly deleting user objects
+                    delete user;
                 }
-                delete tracker;  // Properly deleting tracker object
+                delete tracker;
                 return 0;
             default:
                 cout << "Invalid choice. Please try again." << endl;
