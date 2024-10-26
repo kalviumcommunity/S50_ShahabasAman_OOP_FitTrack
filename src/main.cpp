@@ -4,42 +4,30 @@
 
 using namespace std;
 
-class User {
+// Abstract class with a pure virtual function
+class BaseUser {
+public:
+    virtual void displayInfo() const = 0;  // Pure virtual function
+    virtual ~BaseUser() {}
+};
+
+class User : public BaseUser {
 private:
     string name;
     int age;
     static int userCount;
 
 public:
-    User() {
-        userCount++;
-    }
+    User() { userCount++; }
+    User(const string& newName, int newAge) : name(newName), age(newAge) { userCount++; }
 
-    User(const string& newName, int newAge) {
-        name = newName;
-        age = newAge;
-        userCount++;
-    }
+    virtual ~User() { userCount--; }
 
-    virtual ~User() {
-        userCount--;
-    }
+    string getName() const { return name; }
+    void setName(const string& newName) { name = newName; }
 
-    string getName() const {
-        return name;
-    }
-
-    void setName(const string& newName) {
-        name = newName;
-    }
-
-    int getAge() const {
-        return age;
-    }
-
-    void setAge(int newAge) {
-        age = newAge;
-    }
+    int getAge() const { return age; }
+    void setAge(int newAge) { age = newAge; }
 
     void setDetailsFromInput() {
         cout << "Enter Name: ";
@@ -49,14 +37,12 @@ public:
         cin.ignore();
     }
 
-    void displayInfo() const {
+    void displayInfo() const override {  // Implementing pure virtual function
         cout << "Name: " << name << endl;
         cout << "Age: " << age << endl;
     }
 
-    static int getUserCount() {
-        return userCount;
-    }
+    static int getUserCount() { return userCount; }
 };
 
 int User::userCount = 0;
@@ -68,16 +54,10 @@ private:
 
 public:
     Tracker() {}
-
     ~Tracker() {}
 
-    vector<string> getActivities() const {
-        return activities;
-    }
-
-    void setActivities(const vector<string>& newActivities) {
-        activities = newActivities;
-    }
+    vector<string> getActivities() const { return activities; }
+    void setActivities(const vector<string>& newActivities) { activities = newActivities; }
 
     void logActivitiesFromInput() {
         string activity;
@@ -100,9 +80,7 @@ public:
         }
     }
 
-    static int getTotalActivities() {
-        return totalActivities;
-    }
+    static int getTotalActivities() { return totalActivities; }
 };
 
 int Tracker::totalActivities = 0;
@@ -112,23 +90,15 @@ private:
     string membershipType;
 
 public:
-    Member() : User() {
-        membershipType = "Basic";
-    }
-
+    Member() : User() { membershipType = "Basic"; }
     Member(const string& name, int age, const string& type)
         : User(name, age), membershipType(type) {}
 
-    string getMembershipType() const {
-        return membershipType;
-    }
+    string getMembershipType() const { return membershipType; }
+    void setMembershipType(const string& type) { membershipType = type; }
 
-    void setMembershipType(const string& type) {
-        membershipType = type;
-    }
-
-    void displayInfo() const {
-        User::displayInfo(); 
+    void displayInfo() const override {  // Override for specific details of Member
+        User::displayInfo();
         cout << "Membership Type: " << membershipType << endl;
     }
 };
@@ -138,20 +108,18 @@ private:
     string premiumBenefits;
 
 public:
-    PremiumMember() : Member() {
-        premiumBenefits = "Extended access to all fitness programs.";
-    }
+    PremiumMember() : Member() { premiumBenefits = "Extended access to all fitness programs."; }
     PremiumMember(const string& name, int age, const string& type, const string& benefits)
         : Member(name, age, type), premiumBenefits(benefits) {}
 
-    void displayInfo() const {
-        Member::displayInfo();  
+    void displayInfo() const override {  // Override for specific details of PremiumMember
+        Member::displayInfo();
         cout << "Premium Benefits: " << premiumBenefits << endl;
     }
 };
 
 int main() {
-    vector<User*> users; 
+    vector<BaseUser*> users;
     Tracker* tracker = new Tracker;
 
     while (true) {
@@ -187,17 +155,7 @@ int main() {
             case 4:
                 for (int i = 0; i < users.size(); ++i) {
                     cout << "\nDetails of User " << i + 1 << ":\n";
-
-                    PremiumMember* premiumUser = dynamic_cast<PremiumMember*>(users[i]);
-                    Member* basicUser = dynamic_cast<Member*>(users[i]);
-
-                    if (premiumUser) {
-                        premiumUser->displayInfo();
-                    } else if (basicUser) {
-                        basicUser->displayInfo();
-                    } else {
-                        users[i]->displayInfo();
-                    }
+                    users[i]->displayInfo();  // Polymorphic behavior using abstract class
                 }
                 tracker->displayActivities();
                 break;
@@ -208,7 +166,7 @@ int main() {
                 break;
             case 6:
                 cout << "Exiting..." << endl;
-                for (User* user : users) {
+                for (BaseUser* user : users) {
                     delete user;
                 }
                 delete tracker;
