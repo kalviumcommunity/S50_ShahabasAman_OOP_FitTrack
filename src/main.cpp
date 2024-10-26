@@ -138,17 +138,14 @@ private:
     string premiumBenefits;
 
 public:
-    // Default constructor
     PremiumMember() : Member() {
         premiumBenefits = "Extended access to all fitness programs.";
     }
-
-    // Parameterized constructor
     PremiumMember(const string& name, int age, const string& type, const string& benefits)
         : Member(name, age, type), premiumBenefits(benefits) {}
 
     void displayInfo() const {
-        Member::displayInfo();  // Calling base class function
+        Member::displayInfo();  
         cout << "Premium Benefits: " << premiumBenefits << endl;
     }
 };
