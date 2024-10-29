@@ -4,10 +4,9 @@
 
 using namespace std;
 
-// Abstract class with a pure virtual function
 class BaseUser {
 public:
-    virtual void displayInfo() const = 0;  // Pure virtual function
+    virtual void displayInfo() const = 0;  
     virtual ~BaseUser() {}
 };
 
@@ -37,7 +36,7 @@ public:
         cin.ignore();
     }
 
-    void displayInfo() const override {  // Implementing pure virtual function
+    void displayInfo() const override { 
         cout << "Name: " << name << endl;
         cout << "Age: " << age << endl;
     }
@@ -98,7 +97,7 @@ public:
     string getMembershipType() const { return membershipType; }
     void setMembershipType(const string& type) { membershipType = type; }
 
-    void displayInfo() const override {  // Override for specific details of Member
+    void displayInfo() const override { 
         User::displayInfo();
         cout << "Membership Type: " << membershipType << endl;
     }
@@ -113,7 +112,7 @@ public:
     PremiumMember(const string& name, int age, const string& type, const string& benefits)
         : Member(name, age, type), premiumBenefits(benefits) {}
 
-    void displayInfo() const override {  // Override for specific details of PremiumMember
+    void displayInfo() const override {  
         Member::displayInfo();
         cout << "Premium Benefits: " << premiumBenefits << endl;
     }
@@ -156,7 +155,7 @@ int main() {
             case 3:
                 for (int i = 0; i < users.size(); ++i) {
                     cout << "\nDetails of User " << i + 1 << ":\n";
-                    users[i]->displayInfo();  // Polymorphic behavior using abstract class
+                    users[i]->displayInfo();  
                 }
                 tracker->displayActivities();
                 break;
