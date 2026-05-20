@@ -1,178 +1,488 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <memory>
+#include <limits>
 
 using namespace std;
 
+
+
+// Abstract class:
 class BaseUser {
 public:
-    virtual void displayInfo() const = 0;  
+
+    // Pure virtual functions (=0)
+    virtual void displayInfo() const = 0;
+    virtual void logActivity() = 0;
+    virtual void displayActivities() const = 0;
+
+    // Virtual destructor:
     virtual ~BaseUser() {}
 };
 
-class User : public BaseUser {
-private:
-    string name;
-    int age;
-    static int userCount;
 
-public:
-    User() { userCount++; }
-    User(const string& newName, int newAge) : name(newName), age(newAge) { userCount++; }
-
-    virtual ~User() { userCount--; }
-
-    string getName() const { return name; }
-    void setName(const string& newName) { name = newName; }
-
-    int getAge() const { return age; }
-    void setAge(int newAge) { age = newAge; }
-
-    void setDetailsFromInput() {
-        cout << "Enter Name: ";
-        getline(cin, name);
-        cout << "Enter Age: ";
-        cin >> age;
-        cin.ignore();
-    }
-
-    void displayInfo() const override { 
-        cout << "Name: " << name << endl;
-        cout << "Age: " << age << endl;
-    }
-
-    static int getUserCount() { return userCount; }
-};
-
-int User::userCount = 0;
 
 class Tracker {
 private:
+
     vector<string> activities;
+
     static int totalActivities;
 
 public:
-    Tracker() {}
-    ~Tracker() {}
-
-    vector<string> getActivities() const { return activities; }
-    void setActivities(const vector<string>& newActivities) { activities = newActivities; }
-
 
     void logActivitiesFromInput() {
+
         string activity;
         char more;
+
         do {
+
             cout << "Enter Activity: ";
             getline(cin, activity);
+
+            // Store activity inside vector
             activities.push_back(activity);
+
             totalActivities++;
+
             cout << "Add more activities? (y/n): ";
             cin >> more;
-            cin.ignore();
-        } while (more == 'y' || more == 'Y');
+
+            cin.ignore(
+                numeric_limits<streamsize>::max(),
+                '\n'
+            );
+
+        }
+        while (more == 'y' || more == 'Y');
     }
 
+
     void displayActivities() const {
-        cout << "Logged Activities:" << endl;
+
+        if (activities.empty()) {
+            cout << "No activities logged.\n";
+            return;
+        }
+
+        cout << "\nActivities:\n";
+
         for (const auto& activity : activities) {
-            cout << activity << endl;
+            cout << "- " << activity << endl;
         }
     }
 
-    static int getTotalActivities() { return totalActivities; }
+
+    // Accesses static member without creating object
+    static int getTotalActivities() {
+        return totalActivities;
+    }
 };
 
+
+// Static member initialization
 int Tracker::totalActivities = 0;
 
-class Member : public User {
+
+class User : public BaseUser {
+
 private:
+
+    string name;
+    int age;
+
+    Tracker tracker;
+
+protected:
+
+    static int userCount;
+
+public:
+
+    // Default constructor
+    User()
+        : name("Unknown"),
+          age(0)
+    {
+        userCount++;
+    }
+
+    // Parameterized constructor
+    User(string n, int a)
+        : name(n),
+          age(a)
+    {
+        userCount++;
+    }
+
+    // Copy constructor
+    User(const User& other)
+        : name(other.name),
+          age(other.age)
+    {
+        userCount++;
+    }
+
+    // Destructor
+    virtual ~User() {
+        userCount--;
+    }
+
+    string getName() const {
+        return name;
+    }
+
+    int getAge() const {
+        return age;
+    }
+
+    void setName(string n) {
+        name = n;
+    }
+
+    void setAge(int a) {
+        age = a;
+    }
+
+    void setDetailsFromInput() {
+
+        cout << "Enter Name: ";
+        getline(cin, name);
+
+        cout << "Enter Age: ";
+
+        // Input validation
+        while (!(cin >> age) || age <= 0) {
+
+            cin.clear();
+
+            cin.ignore(
+                numeric_limits<streamsize>::max(),
+                '\n'
+            );
+
+            cout << "Invalid age. Enter again: ";
+        }
+
+        cin.ignore(
+            numeric_limits<streamsize>::max(),
+            '\n'
+        );
+    }
+
+
+    void displayInfo() const override {
+
+        cout << "Name: "
+             << name << endl;
+
+        cout << "Age: "
+             << age << endl;
+    }
+
+
+    void logActivity() override {
+        tracker.logActivitiesFromInput();
+    }
+
+
+    void displayActivities() const override {
+        tracker.displayActivities();
+    }
+
+
+    static int getUserCount() {
+        return userCount;
+    }
+};
+
+
+int User::userCount = 0;
+
+
+class Member : public User {
+
+private:
+
     string membershipType;
 
 public:
-    Member() : User() { membershipType = "Basic"; }
-    Member(const string& name, int age, const string& type)
-        : User(name, age), membershipType(type) {}
 
-    string getMembershipType() const { return membershipType; }
-    void setMembershipType(const string& type) { membershipType = type; }
+    Member()
+        : User(),
+          membershipType("Basic")
+    {}
 
-    void displayInfo() const override { 
+    Member(
+        string n,
+        int a,
+        string type
+    )
+        : User(n, a),
+          membershipType(type)
+    {}
+
+    string getMembershipType() const {
+        return membershipType;
+    }
+
+    void setMembershipType(string type) {
+        membershipType = type;
+    }
+
+
+    void displayInfo() const override {
+
         User::displayInfo();
-        cout << "Membership Type: " << membershipType << endl;
+
+        cout << "Membership Type: "
+             << membershipType
+             << endl;
     }
 };
 
+
+
 class PremiumMember : public Member {
+
 private:
+
     string premiumBenefits;
 
 public:
-    PremiumMember() : Member() { premiumBenefits = "Extended access to all fitness programs."; }
-    PremiumMember(const string& name, int age, const string& type, const string& benefits)
-        : Member(name, age, type), premiumBenefits(benefits) {}
 
-    void displayInfo() const override {  
+    PremiumMember()
+        : Member()
+    {
+        setMembershipType("Premium");
+
+        premiumBenefits =
+            "Extended access to fitness programs";
+    }
+
+
+    PremiumMember(
+        string n,
+        int a,
+        string type,
+        string benefits
+    )
+        : Member(n, a, type),
+          premiumBenefits(benefits)
+    {}
+
+
+    void displayInfo() const override {
+
         Member::displayInfo();
-        cout << "Premium Benefits: " << premiumBenefits << endl;
+
+        cout
+            << "Premium Benefits: "
+            << premiumBenefits
+            << endl;
     }
 };
 
+
+
+
 int main() {
-    vector<BaseUser*> users;
-    Tracker* tracker = new Tracker;
+
+    // Smart pointer for automatic memory management
+    vector<unique_ptr<BaseUser>> users;
+
 
     while (true) {
-        int choice;
-        cout << "\nMenu:\n";
 
-        cout << "1. Add a Basic User\n";
-        cout << "2. Add a Premium Member\n";
+        int choice;
+
+        cout << "\n===== MENU =====\n";
+
+        cout << "1. Add Basic Member\n";
+        cout << "2. Add Premium Member\n";
         cout << "3. Log Activities\n";
-        cout << "4. View Profile and Activities\n";
-        cout << "5. View User and Activity Counts\n";
+        cout << "4. View Profiles & Activities\n";
+        cout << "5. View Counts\n";
         cout << "6. Exit\n";
 
-        cout << "Enter your choice: ";
+        cout << "Enter choice: ";
+
         cin >> choice;
-        cin.ignore();
+
+        cin.ignore(
+            numeric_limits<streamsize>::max(),
+            '\n'
+        );
+
 
         switch (choice) {
-            case 1: {
-                Member* newBasicUser = new Member();
-                newBasicUser->setDetailsFromInput();
-                users.push_back(newBasicUser);
+
+
+        // Add Basic Member
+        case 1: {
+
+            // Create object dynamically
+            auto user =
+                make_unique<Member>();
+
+            user->setDetailsFromInput();
+
+            // Move ownership to vector
+            users.push_back(move(user));
+
+            cout
+                << "Basic Member Added.\n";
+
+            break;
+        }
+
+
+        // Add Premium Member
+        case 2: {
+
+            auto user =
+                make_unique<PremiumMember>();
+
+            user->setDetailsFromInput();
+
+            users.push_back(move(user));
+
+            cout
+                << "Premium Member Added.\n";
+
+            break;
+        }
+
+
+        // Log activities
+        case 3: {
+
+            if (users.empty()) {
+
+                cout
+                    << "No users available.\n";
+
                 break;
             }
 
-            case 2: {
-                PremiumMember* newPremiumUser = new PremiumMember();
-                newPremiumUser->setDetailsFromInput();
-                newPremiumUser->setMembershipType("Premium");
-                users.push_back(newPremiumUser);
+            int userChoice;
+
+            cout
+                << "\nSelect User:\n";
+
+
+            // Display all users
+            for (
+                size_t i = 0;
+                i < users.size();
+                i++
+            )
+            {
+                cout << i + 1
+                     << ". ";
+
+                users[i]->displayInfo();
+
+                cout << endl;
+            }
+
+            cout
+                << "Enter user number: ";
+
+            cin >> userChoice;
+
+            cin.ignore(
+                numeric_limits<streamsize>::max(),
+                '\n'
+            );
+
+
+            if (
+                userChoice > 0 &&
+                userChoice <= users.size()
+            )
+            {
+                users[userChoice - 1]
+                    ->logActivity();
+            }
+            else {
+
+                cout
+                    << "Invalid user.\n";
+            }
+
+            break;
+        }
+
+
+        // Display profile and activities
+        case 4: {
+
+            if (users.empty()) {
+
+                cout
+                    << "No users found.\n";
+
                 break;
             }
-            case 3:
-                for (int i = 0; i < users.size(); ++i) {
-                    cout << "\nDetails of User " << i + 1 << ":\n";
-                    users[i]->displayInfo();  
-                }
-                tracker->displayActivities();
-                break;
 
-            case 4:
-                cout << "Total Users: " << User::getUserCount() << endl;
-                cout << "Total Activities Logged: " << Tracker::getTotalActivities() << endl;
-                break;
-            case 5:
-                cout << "Exiting..." << endl;
-                for (BaseUser* user : users) {
-                    delete user;
-                }
-                delete tracker;
-                return 0;
-            default:
-                cout << "Invalid choice. Please try again" << endl;
+            for (
+                size_t i = 0;
+                i < users.size();
+                i++
+            )
+            {
+
+                cout
+                    << "\n===== User "
+                    << i + 1
+                    << " =====\n";
+
+
+                // Runtime polymorphism:
+                // Appropriate displayInfo()
+                // executes based on object type
+                users[i]->displayInfo();
+
+                users[i]
+                    ->displayActivities();
+            }
+
+            break;
+        }
+
+
+        // Show counts
+        case 5:
+
+            cout
+                << "\nTotal Users: "
+                << User::getUserCount()
+                << endl;
+
+            cout
+                << "Total Activities Logged: "
+                << Tracker::getTotalActivities()
+                << endl;
+
+            break;
+
+
+        // Exit program
+        case 6:
+
+            cout
+                << "Exiting Program...\n";
+
+            return 0;
+
+
+        default:
+
+            cout
+                << "Invalid choice.\n";
         }
     }
 
